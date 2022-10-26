@@ -51,16 +51,11 @@ public class PlayerController : MonoBehaviour
             dropItems();
         }
         //Moving Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && _isGround)
+        if (Input.GetKeyDown(KeyCode.Space) && _isGround && _IsDead == false)
         {
-            anim.SetBool("Jump", true);
+            anim.SetTrigger("JumpT");
             rb.AddForce(Vector3.up * JumpForce,ForceMode.Impulse);
             _isGround=false;
-        }
-         if (Input.GetKeyUp(KeyCode.Space))
-        {
-            anim.SetBool("Jump", false);
-     
         }
         Horizontal = Input.GetAxis("Horizontal");         
         transform.localPosition += new Vector3(Horizontal, 0, 0) *Time.deltaTime * Speed;
@@ -87,7 +82,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
 
                 //Dropping items to base
          public void OnTriggerStay(Collider other)
@@ -134,6 +128,7 @@ public class PlayerController : MonoBehaviour
      {
          if(other.transform.CompareTag("Ground"))
         {
+            anim.SetBool("GroundT",true);
             _isGround=true;
             // Transform child = transform.GetChild(0);
             // child.localRotation = Quaternion.identity;
@@ -150,10 +145,10 @@ public class PlayerController : MonoBehaviour
     void dropItems (){
         foreach (GameObject drops in CollectedItems)
         {
-            distance = new Vector3 (Random.Range(1, 3), 1, Random.Range(1, 3));
+            distance = new Vector3 (Random.Range(-1, 3), 0.5f, Random.Range(-1, 3));
             drops.transform.parent = null;
              var seq = DOTween.Sequence();
-             seq.Append(drops.transform.DOLocalJump((gameObject.transform.position + distance), 2, 1, 0.2f)).Join(drops.transform.DOScale(1f, 0.2f));
+             seq.Append(drops.transform.DOLocalJump((gameObject.transform.position + distance), 1.3f, 1, 0.5f)).Join(drops.transform.DOScale(1f, 0.2f));
              CollectedItems.Remove(drops.gameObject);
         } 
     }
